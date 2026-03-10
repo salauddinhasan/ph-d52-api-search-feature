@@ -88,20 +88,31 @@
       </div>
     </section>
 
-    <script>
-   
+ 
+<script>
 
 const cardContainer = document.getElementById("card-container");
+const searchInput = document.getElementById("searchInput");
+
+let allIssues = [];
 
 fetch("https://phi-lab-server.vercel.app/api/v1/lab/issues")
   .then(res => res.json())
   .then(data => {
 
-    const issues = data.data;
+    allIssues = data.data;
 
-    issues.forEach(issue => {
+    displayIssues(allIssues);
 
-      cardContainer.innerHTML += `
+  });
+
+function displayIssues(issues){
+
+  cardContainer.innerHTML = "";
+
+  issues.forEach(issue => {
+
+    cardContainer.innerHTML += `
       
       <div class="shadow-md p-3 rounded-lg space-y-4 border-t-4 border-t-[#00A96E] hover:shadow-lg transition">
 
@@ -117,7 +128,7 @@ fetch("https://phi-lab-server.vercel.app/api/v1/lab/issues")
         </h2>
 
         <p class="text-xs font-medium text-gray-500">
-          ${issue.description}
+          ${issue.description || ""}
         </p>
 
         <hr>
@@ -129,13 +140,24 @@ fetch("https://phi-lab-server.vercel.app/api/v1/lab/issues")
 
       </div>
 
-      `;
-
-    });
-
+    `;
   });
 
+}
+
+searchInput.addEventListener("input", function(){
+
+  const searchValue = searchInput.value.toLowerCase();
+
+  const filteredIssues = allIssues.filter(issue =>
+    issue.title.toLowerCase().includes(searchValue)
+  );
+
+  displayIssues(filteredIssues);
+
+});
+
 </script>
-    </script>
+
   </body>
 </html>
